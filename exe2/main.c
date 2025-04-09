@@ -10,8 +10,7 @@
 #include "hardware/i2c.h"
 #include "mpu6050.h"
 
-const int I2C_WHO_AM_I = 0x68;
-const int I2C_INT_ENABLE = 0x38;
+const int I2C_CHIP_ADDRESS = 0x68;
 const int I2C_SDA_GPIO = 20;
 const int I2C_SCL_GPIO = 21;
 
@@ -22,21 +21,20 @@ void i2c_task(void *p) {
     gpio_pull_up(I2C_SDA_GPIO);
     gpio_pull_up(I2C_SCL_GPIO);
 
-    uint8_t buffer_who_am_i[6];
-    uint8_t buffer_int_enable[3];
+    uint8_t buffer[6];
 
     // read whoami
     uint8_t reg_address = 0x75;
-    i2c_write_blocking(i2c_default, I2C_WHO_AM_I, &reg_address, 1, true); // true to keep master control of bus
-    i2c_read_blocking(i2c_default, I2C_WHO_AM_I, buffer_who_am_i, 1, false);
-    printf("WHOAMI: 0x%X \n", buffer_who_am_i[0]);
+    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, &reg_address, 1, true); // true to keep master control of bus
+    i2c_read_blocking(i2c_default, I2C_CHIP_ADDRESS, buffer, 1, false);
+    printf("WHOAMI: 0x%X \n", buffer[0]);
 
     // TODO
     // Leia o INT_ENABLE e imprima o valor
     reg_address = 0x38;
-    i2c_write_blocking(i2c_default, I2C_INT_ENABLE, &reg_address, 1, true); // true to keep master control of bus
-    i2c_read_blocking(i2c_default, I2C_INT_ENABLE, buffer_int_enable, 1, false);
-    printf("INT_ENABLE: 0x%X \n", buffer_int_enable[0]);
+    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, &reg_address, 1, true); // true to keep master control of bus
+    i2c_read_blocking(i2c_default, I2C_CHIP_ADDRESS, buffer, 1, false);
+    printf("INT_ENABLE: 0x%X \n", buffer[0]);
 
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(200));
